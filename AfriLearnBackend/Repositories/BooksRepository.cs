@@ -88,9 +88,8 @@ namespace AfriLearnBackend.Repositories
             return allBooks;
         }
 
-        public async Task<Stream> GetBlobAsync(Book book)
+        public async Task<byte []> GetBlobAsync(Book book)
         {
-            Stream streamData;
             var container = GetBlobContainer(BookType.MotherContainer);
             var  relativePath = container.GetDirectoryReference(book.ContainerType);
             var blob = relativePath.GetBlockBlobReference(book.BookName);
@@ -100,8 +99,7 @@ namespace AfriLearnBackend.Repositories
                 await blob.FetchAttributesAsync();
                 byte[] blobBytes = new byte[blob.Properties.Length];
                 await blob.DownloadToByteArrayAsync(blobBytes, 0);
-                streamData = new MemoryStream(blobBytes);
-                return streamData;
+                return blobBytes;
             }
             return null;
         }

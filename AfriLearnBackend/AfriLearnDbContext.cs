@@ -11,6 +11,8 @@ namespace AfriLearnBackend
 
         }
         public DbSet<AppUser> AppUsers { get; set; }
+        public  DbSet<Help>  HelpRequests { get; set; }
+        public  DbSet<Message>  Messages { get; set; }
     }
    
 }

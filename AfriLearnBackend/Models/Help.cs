@@ -1,4 +1,4 @@
-﻿using CMapp.Models;
+﻿using  AfriLearn.Models;
 
 namespace AfriLearnBackend.Models
 {

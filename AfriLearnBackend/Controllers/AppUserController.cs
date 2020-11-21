@@ -16,11 +16,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-namespace ReaiotBackend.Controllers
+
+namespace  AfriLearnBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class UserController : Controller
     {
         #region fields
@@ -133,7 +134,7 @@ namespace ReaiotBackend.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(30);
-            var token = new JwtSecurityToken("Reaiot.com", claims: claims, expires: expires, signingCredentials: creds);
+            var token = new JwtSecurityToken("AfriLearn.com", claims: claims, expires: expires, signingCredentials: creds);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

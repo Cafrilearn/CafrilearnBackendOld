@@ -136,6 +136,8 @@ namespace AfriLearnBackend
                 });
             });
             services.AddTransient<IBooksRepository, BooksRepository>();
+            services.AddTransient<IHelpRepository, HelpRepository>();
+            services.AddTransient<IMessagesRepository, MessagesRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,  UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
@@ -160,7 +162,7 @@ namespace AfriLearnBackend
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ChatHub>("/ChatMessage");
+                endpoints.MapHub<ChatHub>("/AfriLearnMessage");
             });
             app.Run(async (context) => await Task.Run(() => context.Response.Redirect("/swagger")));
         }
