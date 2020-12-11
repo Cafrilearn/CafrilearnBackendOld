@@ -4,14 +4,16 @@ using AfriLearnBackend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AfriLearnBackend.Migrations
 {
     [DbContext(typeof(AfriLearnDbContext))]
-    partial class AfriLearnDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201211100555_AuthUserMigration")]
+    partial class AuthUserMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

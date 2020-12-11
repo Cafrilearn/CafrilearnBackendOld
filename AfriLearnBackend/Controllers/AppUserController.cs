@@ -47,10 +47,10 @@ namespace  AfriLearnBackend.Controllers
             {
                 var user = await _signInManager.UserManager.FindByEmailAsync(userEntity.Email);
                 await _signInManager.UserManager.AddToRoleAsync(user, user.Role);
-                var token = GenerateJwtToken(user);
-                return Ok(token);
+                userEntity.AuthKey = GenerateJwtToken(user);
+                return Ok(userEntity);
             }
-            return BadRequest($"Something went wrong, could not Register the User with email {userEntity.Email}");
+            return BadRequest();
         }
 
         [Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
@@ -109,16 +109,17 @@ namespace  AfriLearnBackend.Controllers
 
         [HttpPost("authenticateUser")]
         [AllowAnonymous]
-        public async Task<IActionResult> Authenticate([FromBody]AuthUser authDto)
+        public async Task<IActionResult> Authenticate([FromBody]AuthUser  authDto)
         {
             var user = await _signInManager.UserManager.FindByEmailAsync(authDto.Email);
             var result = await _signInManager.PasswordSignInAsync(user, authDto.Password, false, false);
             if (result.Succeeded)
             {
-                var token = GenerateJwtToken(user);
-                return Ok(token);
+                var userData =  _afriLearnDbContext.Users.Include(s => s.Setting).FirstOrDefault(user => user.Email == authDto.Email);
+                userData.AuthKey = GenerateJwtToken(user);
+                return Ok(userData);
             }
-            return BadRequest("Username or Passsword not correct");
+            return BadRequest();
         }
 
         private string GenerateJwtToken(AppUser user)
