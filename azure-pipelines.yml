@@ -42,7 +42,7 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-    artifactName: 'TrackTileBackend'
+    artifactName: 'AfrilearnBackend'
 
 
 - task: DotNetCoreCLI@2
