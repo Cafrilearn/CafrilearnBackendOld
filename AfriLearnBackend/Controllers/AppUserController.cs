@@ -122,6 +122,20 @@ namespace  AfriLearnBackend.Controllers
             return BadRequest();
         }
 
+        [HttpPost("passwordReset")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserByEmail(AuthUser currentUser)
+        {
+            var user =  _afriLearnDbContext.Users.Include(s => s.Setting).FirstOrDefault(user => user.Email == currentUser.Email);
+            if (user != null)
+            {
+                var resetPassord = await _signInManager.UserManager.ResetPasswordAsync(user, user.AuthKey, currentUser.Password);
+                user.PasswordHash = currentUser.Password;
+                return Ok(user);
+            }
+            return NotFound();
+        }
+
         private string GenerateJwtToken(AppUser user)
         {
             var claims = new List<Claim>
