@@ -17,8 +17,7 @@ namespace AfriLearnBackend.Services
                 {
                     From = new MailAddress("reaiotorg@gmail.com"),
                     Subject = "Password Recovery",
-                    Body = $"Your Password recovery code is {generatedcode}" ,
-                    
+                    Body = $"<h4>Hello, </h4> Welcome to Cafrilearn. <br>  Your password recovery code is <strong> { generatedcode } </strong> <br> <br> Thank you. <br> <br> Regards, <br><br> Humphry Shikunzi <br> System Engineer <br>  Cafrilearn <br> Nairobi,  Kenya"
                 };
                 mail.IsBodyHtml = true;
                 mail.To.Add(new MailAddress(Email));
