@@ -12,7 +12,7 @@
         public const string Agriculture = "secondary/agriculture";
         public const string Biology = "secondary/biology";
         public const string BusinessStudies = "secondary/business-studies";
-        public const string ComputerStudies = "secondarycomputer-studied";
+        public const string ComputerStudies = "secondary/computer-studies";
         public const string Chemistry = "secondary/chemistry";
         public const string SecEnglish = "secondary/english";
         public const string Geography = "secondary/geography";

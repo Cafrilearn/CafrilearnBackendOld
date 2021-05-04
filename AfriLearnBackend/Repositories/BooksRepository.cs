@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,14 +51,14 @@ namespace AfriLearnBackend.Repositories
             var bussinessBooks = await GetFilesListAsync(BookType.BusinessStudies);
             var chemistryBooks = await GetFilesListAsync(BookType.Chemistry);
             var computerScienceBooks = await GetFilesListAsync(BookType.ComputerStudies);
-            var englishSecBooks = await GetFilesListAsync(BookType.English);
+            var englishSecBooks = await GetFilesListAsync(BookType.SecEnglish);
             var geographyBooks = await GetFilesListAsync(BookType.Geography);
             var historyBooks = await GetFilesListAsync(BookType.History);
             var homeScienceBooks = await GetFilesListAsync(BookType.HomeScience);
-            var kiswahiliSecBooks = await GetFilesListAsync(BookType.Kiswahili);
-            var mathematicsBooks = await GetFilesListAsync(BookType.Mathematics);
+            var kiswahiliSecBooks = await GetFilesListAsync(BookType.SecKiswahili);
+            var mathematicsBooks = await GetFilesListAsync(BookType.SecMathematics);
             var physicsBooks = await GetFilesListAsync(BookType.Physics);
-            var religiousEducationBoooks = await GetFilesListAsync(BookType.ReligiousEducation);
+            var religiousEducationBoooks = await GetFilesListAsync(BookType.SecReligiousEducation);
             var setBooks = await GetFilesListAsync(BookType.SetBooks);
            
             var allBooks = new List<string>();
@@ -75,7 +74,7 @@ namespace AfriLearnBackend.Repositories
             allBooks.AddRange(bussinessBooks);
             allBooks.AddRange(chemistryBooks);
             allBooks.AddRange(computerScienceBooks);
-            allBooks.AddRange( englishSecBooks);
+            allBooks.AddRange(englishSecBooks);
             allBooks.AddRange(geographyBooks);
             allBooks.AddRange(historyBooks);
             allBooks.AddRange(homeScienceBooks);
