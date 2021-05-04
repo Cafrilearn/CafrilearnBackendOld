@@ -1,5 +1,4 @@
-﻿using AfriLearnBackend;
-using AfriLearnBackend.Constants;
+﻿using AfriLearnBackend.Constants;
 using AfriLearnBackend.Models;
 using CMapp.Models;
 using CMapp_Backend.Models;
@@ -17,7 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace  AfriLearnBackend.Controllers
+namespace AfriLearnBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

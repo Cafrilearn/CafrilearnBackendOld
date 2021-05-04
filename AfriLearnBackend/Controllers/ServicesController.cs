@@ -26,6 +26,7 @@ namespace AfriLearnBackend.Controllers
         }
                 
         [HttpPost("ResetPassword")]
+        [AllowAnonymous]
         public  IActionResult ChangePasswordDto([FromBody]ChangePasswordDto changePasswordDto)
         {
             if (ModelState.IsValid)
