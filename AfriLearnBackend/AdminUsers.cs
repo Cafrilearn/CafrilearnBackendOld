@@ -8,6 +8,7 @@ namespace AfriLearnBackend
     {
         public static List<AppUser> Admins = new List<AppUser>()
         {
+            // This is the default Admin
             new AppUser()
             {
                 PasswordHash = "African2288.",
