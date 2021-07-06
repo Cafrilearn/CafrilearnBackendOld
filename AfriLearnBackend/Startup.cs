@@ -66,7 +66,7 @@ namespace AfriLearnBackend
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    ValidIssuer = "AfriLearn.com",
+                    ValidIssuer = "Cafrilearn.com",
                     ClockSkew = TimeSpan.Zero
                 };
             });
@@ -87,12 +87,12 @@ namespace AfriLearnBackend
                 c.SwaggerDoc("v1",
                     new OpenApiInfo
                     {
-                        Title = "AfriLearn",
+                        Title = "Cafrilearn",
                         Version = "v1",
                         Contact = new OpenApiContact()
                         {
-                            Email = "AfriLearn@gmail.com",
-                            Name = "infor AfriLearn support",
+                            Email = "Cafrilearn@gmail.com",
+                            Name = "infor Cafrilearn support",
                             Url = new Uri("https://reaiot.com")
                         },
 
@@ -103,7 +103,7 @@ namespace AfriLearnBackend
                             Name = "MIT Licence",
                             Url = new Uri("https://reaiot.com")
                         },
-                        Description = "This Swagger  UI is for documentation for all  AfriLearn " +
+                        Description = "This Swagger  UI is for documentation for all  Cafrilearn " +
                                       "services that need backend, either data storage like Mobile apps or content in it stored in the database."
 
                     });

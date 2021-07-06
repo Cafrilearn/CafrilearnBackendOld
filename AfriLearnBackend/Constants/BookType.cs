@@ -2,19 +2,19 @@
 {
     class BookType
     {
-        public const string MotherContainer = "freelearn";
+        public const string MotherContainer = "cafrilearn";
         public const string English ="primary/english";
         public const string Kiswahili = "primary/kiswahili";
         public const string Science = "primary/science";
         public const string SocialStudies = "primary/social-studies";
         public const string ReligiousEducation = "primary/religious-education";
         public const string Mathematics = "primary/mathematics";
-        public const string PE = "primary/mathematics";
+        public const string PE = "primary/physical-education";
         public const string Agriculture = "secondary/agriculture";
         public const string Biology = "secondary/biology";
         public const string BusinessStudies = "secondary/business-studies";
-        public const string ComputerStudies = "secondary/computer-studies";
         public const string Chemistry = "secondary/chemistry";
+        public const string ComputerStudies = "secondary/computer-studies";
         public const string SecEnglish = "secondary/english";
         public const string Geography = "secondary/geography";
         public const string History = "secondary/history";
