@@ -9,6 +9,7 @@
         public const string SocialStudies = "primary/social-studies";
         public const string ReligiousEducation = "primary/religious-education";
         public const string Mathematics = "primary/mathematics";
+        public const string PE = "primary/mathematics";
         public const string Agriculture = "secondary/agriculture";
         public const string Biology = "secondary/biology";
         public const string BusinessStudies = "secondary/business-studies";
