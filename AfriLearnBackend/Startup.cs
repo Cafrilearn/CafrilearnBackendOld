@@ -151,7 +151,7 @@ namespace AfriLearnBackend
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CMapp");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cafrilearn");
                 c.RoutePrefix = string.Empty;
             });
             app.UseIpRateLimiting();
