@@ -135,16 +135,16 @@ namespace AfriLearnBackend.Controllers
             return NotFound();
         }
 
-        [HttpPost("validateEmail")]
+        [HttpGet("validateEmail")]
         [AllowAnonymous]
-        public IActionResult ValidateEmail(string email)
+        public IActionResult ValidateEmail(EmailDto email)
         {
-            var user = _afriLearnDbContext.Users.FirstOrDefault(user => user.Email == email);
+            var user = _afriLearnDbContext.Users.FirstOrDefault(user => user.Email == email.Email);
             if (user == null) return NotFound();
             return Ok(user);
         }
 
-        [HttpPost("validateUserName")]
+        [HttpGet("validateUserName")]
         [AllowAnonymous]
         public IActionResult ValidateUserName(string userName)
         {
