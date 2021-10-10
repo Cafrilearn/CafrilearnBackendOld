@@ -135,6 +135,24 @@ namespace AfriLearnBackend.Controllers
             return NotFound();
         }
 
+        [HttpPost("validateEmail")]
+        [AllowAnonymous]
+        public IActionResult ValidateEmail(string email)
+        {
+            var user = _afriLearnDbContext.Users.FirstOrDefault(user => user.Email == email);
+            if (user == null) return NotFound();
+            return Ok(user);
+        }
+
+        [HttpPost("validateUserName")]
+        [AllowAnonymous]
+        public IActionResult ValidateUserName(string userName)
+        {
+            var user = _afriLearnDbContext.Users.FirstOrDefault(user => user.UserName == userName);
+            if (user == null) return NotFound();
+            return Ok(user);
+        }
+
         private string GenerateJwtToken(AppUser user)
         {
             var claims = new List<Claim>
