@@ -11,7 +11,7 @@ namespace AfriLearnBackend
             // This is the default Admin
             new AppUser()
             {
-                PasswordHash = "African2288.",
+                PasswordHash = "2288Shiks.",
                 UserName = "Humphryshikunzi",
                 Email = "humphry.shikunzi@outlook.com",
                 Role = Roles.Admin

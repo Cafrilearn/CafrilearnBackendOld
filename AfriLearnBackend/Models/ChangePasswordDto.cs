@@ -1,7 +1,6 @@
-﻿namespace CMapp_Backend.Models
+﻿namespace CafrilearnBackend.Models;
+
+public class ChangePasswordDto
 {
-    public class ChangePasswordDto
-    {
-        public  string  Email { get; set; }
-    }
+    public string Email { get; set; }
 }

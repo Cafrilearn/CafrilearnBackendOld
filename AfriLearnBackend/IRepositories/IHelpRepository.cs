@@ -1,15 +1,15 @@
-﻿using AfriLearnBackend.Models;
+﻿using CafrilearnBackend.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AfriLearnBackend.IRepositories
+namespace CafrilearnBackend.IRepositories;
+
+public interface IHelpRepository
 {
-    public interface IHelpRepository
-    {
-        Task AddHelpRequest(Help help);
-        IEnumerable<Help> GetHelpRequests();
-        Help GetHelpRequestById(int id);
-        Task DeleteHelpRequest(int id);
-        Task UpdateHelpRequest(Help help);
-    }
+    Task AddHelpRequest(Help help);
+    IEnumerable<Help> GetHelpRequests();
+    Help GetHelpRequestById(int id);
+    Task DeleteHelpRequest(int id);
+    Task UpdateHelpRequest(Help help);
 }
+

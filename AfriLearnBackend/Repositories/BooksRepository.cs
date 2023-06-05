@@ -13,17 +13,20 @@ namespace AfriLearnBackend.Repositories
     public class BooksRepository : IBooksRepository
     {
         private readonly IConfiguration _storageCredentials;
+
         public BooksRepository(IConfiguration storageCredentials)
         {
             _storageCredentials = storageCredentials;
         }
 
-        public async Task<List<string>> GetFilesListAsync(string  relativeContainerPath)
+        public async Task<List<string>> GetFilesListAsync(string relativeContainerPath)
         {
             var container = GetBlobContainer(BookType.MotherContainer);
             var referenceContainer = container.GetDirectoryReference(relativeContainerPath);
             var allBlobsList = new List<string>();
+
             BlobContinuationToken token = null;
+
             do
             {
                 var result = await referenceContainer.ListBlobsSegmentedAsync(token).ConfigureAwait(false);
@@ -35,6 +38,7 @@ namespace AfriLearnBackend.Repositories
                 token = result.ContinuationToken;
             }
             while (token != null);
+
             return allBlobsList;
         }
 
@@ -60,7 +64,7 @@ namespace AfriLearnBackend.Repositories
             var physicsBooks = await GetFilesListAsync(BookType.Physics);
             var religiousEducationBoooks = await GetFilesListAsync(BookType.SecReligiousEducation);
             var setBooks = await GetFilesListAsync(BookType.SetBooks);
-           
+
             var allBooks = new List<string>();
 
             allBooks.AddRange(scienceBooks);
@@ -87,12 +91,13 @@ namespace AfriLearnBackend.Repositories
             return allBooks;
         }
 
-        public async Task<byte []> GetBlobAsync(Book book)
+        public async Task<byte[]> GetBlobAsync(Book book)
         {
             var container = GetBlobContainer(BookType.MotherContainer);
-            var  relativePath = container.GetDirectoryReference(book.ContainerType);
+            var relativePath = container.GetDirectoryReference(book.ContainerType);
             var blob = relativePath.GetBlockBlobReference(book.BookName);
             var blobExists = await blob.ExistsAsync().ConfigureAwait(false);
+
             if (blobExists)
             {
                 await blob.FetchAttributesAsync();
@@ -100,6 +105,7 @@ namespace AfriLearnBackend.Repositories
                 await blob.DownloadToByteArrayAsync(blobBytes, 0);
                 return blobBytes;
             }
+
             return null;
         }
 
@@ -108,12 +114,13 @@ namespace AfriLearnBackend.Repositories
             var connStr = _storageCredentials.GetSection("BlobStorageDetails").GetSection("ConnectionString").Value;
             var account = CloudStorageAccount.Parse(connStr);
             var blobClient = account.CreateCloudBlobClient();
+
             return blobClient.GetContainerReference(containerType);
         }
 
         public Task GetBook(string bookType, string bookFormat)
         {
             return null;
-        }        
+        }
     }
 }

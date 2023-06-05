@@ -1,8 +1,6 @@
-﻿using AfriLearnBackend.Models;
+﻿namespace CafrilearnBackend.Models;
 
-namespace AfriLearn.Models
-{
-    public class Book : BaseModel
+ public class Book : BaseModel
     {
         public string BookUri { get; set; }
         public string BookName { get; set; }
@@ -11,4 +9,3 @@ namespace AfriLearn.Models
         public string Author { get; set; }
         public string CoverImagePhotoUri { get; set; }
     }
-}

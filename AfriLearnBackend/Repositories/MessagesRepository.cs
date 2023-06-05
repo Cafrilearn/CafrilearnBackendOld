@@ -9,20 +9,23 @@ namespace AfriLearnBackend.Repositories
     public class MessagesRepository : IMessagesRepository
     {
         private readonly AfriLearnDbContext _dbContext;
+
         public MessagesRepository(AfriLearnDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+        
         public async Task<Message> AddMessage(Message message)
         {
-            _dbContext.Messages.Add(message);
+            await _dbContext.Messages.AddAsync(message);
             await _dbContext.SaveChangesAsync();
+
             return message;
         }
 
         public async Task DeleteMessage(int id)
         {
-            _dbContext.Messages.Remove(_dbContext.Messages.Find(id));
+            _dbContext.Messages.Remove(_dbContext.Messages.Find(id));            
             await _dbContext.SaveChangesAsync();            
         }
 

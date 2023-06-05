@@ -1,7 +1,6 @@
-﻿namespace AfriLearnBackend.Models
+﻿namespace CafrilearnBackend.Models;
+
+public class BaseModel
 {
-    public class BaseModel
-    {
-        public  int  Id { get; set; }
-    }
+    public int Id { get; set; }
 }

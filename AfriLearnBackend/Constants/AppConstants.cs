@@ -1,7 +1,6 @@
-﻿namespace  AfriLearnBackend.Constants
+﻿namespace CafrilearnBackend.Constants;
+
+public class AppConstants
 {
-    public class AppConstants
-    {
-        public const string ContainerName = "reaiotblobs ";
-    }
+    public const string ContainerName = "reaiotblobs ";
 }

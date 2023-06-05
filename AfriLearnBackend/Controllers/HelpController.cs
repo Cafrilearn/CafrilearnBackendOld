@@ -1,67 +1,75 @@
-﻿using AfriLearnBackend.IRepositories;
-using AfriLearnBackend.Models;
+﻿using CafrilearnBackend.IRepositories;
+using CafrilearnBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace AfriLearnBackend.Controllers
+namespace CafrilearnBackend.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = "Bearer")]
+public class HelpController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
-    public class HelpController : ControllerBase
+    private readonly IHelpRepository _helpRepository;
+
+    public HelpController(IHelpRepository helpRepository)
     {
-        private readonly IHelpRepository _helpRepository;
-        public HelpController(IHelpRepository helpRepository)
-        {
-            _helpRepository = helpRepository;
-        }
+        _helpRepository = helpRepository;
+    }
 
 
-        [HttpPost("add")]
-        public async Task<ActionResult> Add(Help help)
+    [HttpPost("add")]
+    public async Task<ActionResult> Add(Help help)
+    {
+        if (ModelState.IsValid)
         {
-            if (ModelState.IsValid)
-            {
-              await  _helpRepository.AddHelpRequest(help);
-              return Ok(help);
-            }
-            return BadRequest();
+            await _helpRepository.AddHelpRequest(help);
+
+            return Ok(help);
         }
 
-        [HttpGet("all")]
-        public ActionResult GetAll()
+        return BadRequest();
+    }
+
+    [HttpGet("all")]
+    public ActionResult GetAll()
+    {
+        return Ok(_helpRepository.GetHelpRequests());
+    }
+
+    [HttpGet("getById/{id}")]
+    public ActionResult GetById(int id)
+    {
+        return Ok(_helpRepository.GetHelpRequestById(id));
+    }
+
+    [HttpPut("update")]
+    public async Task<ActionResult> Update(Help help)
+    {
+        if (ModelState.IsValid)
         {
-            return Ok(_helpRepository.GetHelpRequests());
+            await _helpRepository.UpdateHelpRequest(help);
+
+            return Ok(help);
         }
 
-        [HttpGet("getbyid/{id}")]
-        public ActionResult GetById(int id)
+        return BadRequest();
+    }
+
+    [HttpDelete("delete/{id}")]
+    public ActionResult Delete(int id)
+    {
+        var help = _helpRepository.GetHelpRequestById(id);
+
+        if (help != null)
         {
-            return Ok(_helpRepository.GetHelpRequestById(id));
+            _helpRepository.DeleteHelpRequest(id);
+
+            return Ok(help);
         }
 
-        [HttpPut("update")]
-        public async Task<ActionResult> Update(Help help)
-        {
-            if (ModelState.IsValid)
-            {
-                await _helpRepository.UpdateHelpRequest(help);
-                return Ok(help);
-            }
-            return BadRequest();
-        }
-
-        [HttpDelete("delete/{id}")]
-        public ActionResult Delete(int id)
-        {
-            var help = _helpRepository.GetHelpRequestById(id);
-            if (help != null)
-            {
-                _helpRepository.DeleteHelpRequest(id);
-                return Ok(help);
-            }
-            return BadRequest();
-        }
+        return BadRequest();
     }
 }
+

@@ -1,7 +1,6 @@
-﻿using AfriLearnBackend.Constants;
-using AfriLearnBackend.Models;
-using CMapp.Models;
-using CMapp_Backend.Models;
+﻿using CafrilearnBackend.Constants;
+using CafrilearnBackend.Models;
+using CafrilearnBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,140 +15,155 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AfriLearnBackend.Controllers
+namespace CafrilearnBackend.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize(AuthenticationSchemes = "Bearer")]
+public class UserController : Controller
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer")]
-    public class UserController : Controller
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly AfriLearnDbContext _afriLearnDbContext;
+    private readonly AppSettings _appSettings;
+
+    public UserController(SignInManager<AppUser> signInManager, AfriLearnDbContext afriLearnDbContext,
+                            IOptions<AppSettings> appSettings, UserManager<AppUser> userManager)
     {
-        #region fields
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly AfriLearnDbContext  _afriLearnDbContext;
-        private readonly AppSettings _appSettings;
-        #endregion
+        _signInManager = signInManager;
+        _afriLearnDbContext = afriLearnDbContext;
+        _appSettings = appSettings.Value;
+    }
 
-        public UserController(SignInManager<AppUser> signInManager,  AfriLearnDbContext  afriLearnDbContext, IOptions<AppSettings> appSettings, UserManager<AppUser> userManager)
+    [HttpPost("register")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Register([FromBody] AppUser userEntity)
+    {
+        userEntity.TwoFactorEnabled = false;
+        var result = await _signInManager.UserManager.CreateAsync(userEntity, userEntity.PasswordHash);
+
+        if (result.Succeeded)
         {
-            _signInManager = signInManager;
-            _afriLearnDbContext = afriLearnDbContext;
-            _appSettings = appSettings.Value;
+            var user = await _signInManager.UserManager.FindByEmailAsync(userEntity.Email);
+            await _signInManager.UserManager.AddToRoleAsync(user, user.Role);
+            userEntity.AuthKey = GenerateJwtToken(user);
+
+            return Ok(userEntity);
         }
 
-        [HttpPost("register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody]AppUser userEntity)
+        return BadRequest();
+    }
+
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
+    [HttpGet("getAll")]
+    public IActionResult GetUsers()
+    {
+        return Ok(_afriLearnDbContext.Users.Include(s => s.Setting));
+    }
+
+    [HttpGet("get/{id}")]
+    public IActionResult GetUser(string id)
+    {
+        var user = _afriLearnDbContext.Users.Include(s => s.Setting).FirstOrDefault(user => user.Id == id);
+
+        if (user != null)
         {
-            userEntity.TwoFactorEnabled = false;
-            var result = await _signInManager.UserManager.CreateAsync(userEntity, userEntity.PasswordHash);
-            if (result.Succeeded)
+            return Ok(user);
+        }
+
+        return NotFound($"User with Id {id} not found in the database");
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateUser(AppUser appUser)
+    {
+        _afriLearnDbContext.Entry(appUser).State = EntityState.Modified;
+
+        try
+        {
+            await _afriLearnDbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!_afriLearnDbContext.Users.Any(u => u.Id == appUser.Id))
             {
-                var user = await _signInManager.UserManager.FindByEmailAsync(userEntity.Email);
-                await _signInManager.UserManager.AddToRoleAsync(user, user.Role);
-                userEntity.AuthKey = GenerateJwtToken(user);
-                return Ok(userEntity);
+                return NotFound();
             }
-            return BadRequest();
-        }
-
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = Roles.Admin)]
-        [HttpGet("getall")]
-        public IActionResult GetUsers()
-        {
-            return Ok(_afriLearnDbContext.Users.Include(s => s.Setting));
-        }
-
-        [HttpGet("get/{id}")]
-        public IActionResult GetUser(string id)
-        {
-            var user = _afriLearnDbContext.Users.Include(s =>s.Setting).FirstOrDefault(user => user.Id == id);
-            if (user != null)
+            else
             {
-                return Ok(user);
+                throw;
             }
-            return NotFound($"User with Id {id} not found in the database");
         }
 
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdateUser(AppUser appUser)
+        return Ok(appUser);
+    }
+
+    [HttpDelete("delete")]
+    public IActionResult Delete(string id)
+    {
+        var user = _afriLearnDbContext.Users.FirstOrDefault(user => user.Id == id);
+
+        if (user != null)
         {
-            _afriLearnDbContext.Entry(appUser).State = EntityState.Modified;
+            _afriLearnDbContext.Remove(user);
+            _afriLearnDbContext.SaveChanges();
 
-            try
-            {
-                await _afriLearnDbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_afriLearnDbContext.Users.Any(u => u.Id == appUser.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return Ok(appUser);
+            return Ok(user);
         }
 
-        [HttpDelete("delete")]
-        public IActionResult Delete(string id)
+        return BadRequest($"Error, could not delete the user with id {id}. The user is not found in the database.");
+    }
+
+    [HttpPost("authenticateUser")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Authenticate([FromBody] AuthUser authDto)
+    {
+        var user = await _signInManager.UserManager.FindByEmailAsync(authDto.Email);
+        var result = await _signInManager.PasswordSignInAsync(user, authDto.Password, false, false);
+
+        if (result.Succeeded)
         {
-            var user = _afriLearnDbContext.Users.FirstOrDefault(user => user.Id == id);
-            if (user != null)
-            {
-                _afriLearnDbContext.Remove(user);
-                _afriLearnDbContext.SaveChanges();
-                return Ok(user);
-            }
-            return BadRequest($"Error, could not delete the user with id {id}. The user is not found in the system.");
+            var userData = _afriLearnDbContext.Users.Include(s => s.Setting).FirstOrDefault(user => user.Email == authDto.Email);
+            userData.AuthKey = GenerateJwtToken(user);
+
+            return Ok(userData);
         }
 
-        [HttpPost("authenticateUser")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Authenticate([FromBody]AuthUser  authDto)
+        return BadRequest();
+    }
+
+    [HttpPost("passwordReset")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetUserByEmail(AuthUser currentUser)
+    {
+        var user = _afriLearnDbContext.Users.Include(s => s.Setting).FirstOrDefault(user => user.Email == currentUser.Email);
+
+        if (user != null)
         {
-            var user = await _signInManager.UserManager.FindByEmailAsync(authDto.Email);
-            var result = await _signInManager.PasswordSignInAsync(user, authDto.Password, false, false);
-            if (result.Succeeded)
-            {
-                var userData =  _afriLearnDbContext.Users.Include(s => s.Setting).FirstOrDefault(user => user.Email == authDto.Email);
-                userData.AuthKey = GenerateJwtToken(user);
-                return Ok(userData);
-            }
-            return BadRequest();
+            var resetPassord = await _signInManager.UserManager.ResetPasswordAsync(user, user.AuthKey, currentUser.Password);
+            user.PasswordHash = currentUser.Password;
+
+            return Ok(user);
         }
 
-        [HttpPost("passwordReset")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUserByEmail(AuthUser currentUser)
-        {
-            var user =  _afriLearnDbContext.Users.Include(s => s.Setting).FirstOrDefault(user => user.Email == currentUser.Email);
-            if (user != null)
-            {
-                var resetPassord = await _signInManager.UserManager.ResetPasswordAsync(user, user.AuthKey, currentUser.Password);
-                user.PasswordHash = currentUser.Password;
-                return Ok(user);
-            }
-            return NotFound();
-        }
+        return NotFound();
+    }
 
-        private string GenerateJwtToken(AppUser user)
+    private string GenerateJwtToken(AppUser user)
+    {
+        var claims = new List<Claim>
         {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Key));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(30);
-            var token = new JwtSecurityToken("AfriLearn.com", claims: claims, expires: expires, signingCredentials: creds);
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Key));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var expires = DateTime.Now.AddDays(30);
+        var token = new JwtSecurityToken("Cafrilearn.com", claims: claims, expires: expires, signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
+
